@@ -24,11 +24,11 @@ int main()
             printf("Soucin: %d * %d = %d\n", value1,value2, value1*value2);
 
             if (value2 && true)
-                printf("Podil: %d / %d = %1.2f\n", value1,value2, podil_prumer = ((float)value1/value2));
+                printf("Podil: %d / %d = %.2f\n", value1,value2, podil_prumer = ((float)value1/value2));
             else
                 printf("Nedefinovany vysledek!\n");
 
-            printf("Prumer: (%d + %d)/2 = %1.2f\n",value1, value2, podil_prumer = ((float)value1+value2)/2.0);
+            printf("Prumer: (%d + %d)/2 = %.2f\n",value1, value2, podil_prumer = ((float)value1+value2)/2.0);
 
         } else
             printf("Vstup je mimo interval!\n");
