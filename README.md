@@ -3,7 +3,7 @@ Programming in C
 
 the_first_program -  Arithmetic operations
 
-the_second_program - ...
+the_second_program - Operations with entered numbers
 
 the_third_program - ...
 
