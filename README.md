@@ -1,18 +1,17 @@
 
-Programming in C, 1st semester
+Programming in C
 
 
-HW 01 - Načítání vstupu, výpočet a výstup
+the_first_program -  Arithmetic operations
 
-HW 02 - První cyklus
+the_second_program - ...
 
-HW 03 - Kreslení (ASCII art)
+the_third_program - ...
 
-HW 04 - Prvočíselný rozklad
+the_fourth_program - ...
 
-HW 05 - Caesarova šifra
+the_fifth_program - ...
 
-HW 06 - Maticové počty
+the_sixth_program - ...
 
-HW 07 - Hledání textu v souborech
-
+the_seventh_program - ...
