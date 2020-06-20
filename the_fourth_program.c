@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
 
         if (number != 1)
         {
+            count = 0;
+            k = 0;
+
             printf("Prime factorization %d is:\n", number);
 
             for (int j = 2; j < number; j++)
