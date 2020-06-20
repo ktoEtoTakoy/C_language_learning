@@ -4,60 +4,79 @@
 /* The main program */
 int main(int argc, char *argv[])
 {
-    int N = 0;
-    int i = 0;
-    int k = 0;
-    int j = 0;
+    int number = 0;
+    int k =0;
+
     int count = 0;
-    int status;
-    status = scanf("%d", &N);
-    while (status == 1) {//scanf_s
-        count = 0;
-        k = 0;
-        if (N == 0) break;
-        for (j = 2; j<N; j++) {
-            if (N % j == 0)
-                count++;
-        }
-        if (N < 0) {
-            fprintf(stderr, "Error: Chybny vstup!\n");
+    char error_msg_100[] = "Error, this input is not allowed!";
+
+    int input = scanf("%d", &number);
+
+    while (input == 1)
+    {
+        if (number == 0) break;
+
+        if (number < 0)
+        {
+            fprintf(stderr, "Error: Bad input!\n");
             return 100;
         }
-        if (N == 1) {
-            printf("Prvociselny rozklad cisla %d je:\n%d\n", N, N);
+
+        if (number == 1)
+        {
+            printf("Prime factorization of %d is:\n%d\n", number, number);
         }
-        if (N != 1) {
-            printf("Prvociselny rozklad cisla %d je:\n", N);
-            for (i = 2; i*i <= N; i++) {
-                if (N%i == 0) {
-                    if (i >= 3 && k >= 1)
-                        printf(" x %d", i);
-                    else
+
+        if (number != 1)
+        {
+            printf("Prime factorization %d is:\n", number);
+
+            for (int j = 2; j < number; j++)
+            {
+                if (number % j == 0)
+                    count++; // считаем количество делителей напр 30: 2,3,5,6,10,15
+            }
+
+            for (int i = 2; i*i <= number; i++) // идем до 5
+            {
+                if (number%i == 0) // если делитель то выполняем, например для 2, 3, 5
+                {
+                    if (i >=3 && k>=1)
+                    {
+                        printf(" * %d", i);
+                    }else
                         printf("%d", i);
-                    for (k = 0; N%i == 0; k++) {
-                        N /= i;
+
+                    for (k = 0; number%i == 0; k++) // если i является множителем, то выполняется это до тех пор, пока является таковым. k же
+                    { // в свож очередь являетсятся счетчком степени
+                        number /= i;
                     }
-                    if (k >= 2) {
+
+                    if (k >= 2) // пишет степень, тк в предыдыщем цыкле k увеличивались столько раз, сколько есть делителей
                         printf("^%d", k);
-                    }
-                    if (N == 1)
+
+                    if (number == 1)
                         printf("\n");
                 }
             }
 
-            if (N>1) {
+            if (number>1) // выписывает остаток
+            {
                 if (count == 0)
-                    printf("%d\n", N);
+                    printf("%d\n", number);
                 else
-                    printf(" x %d\n", N);
+                    printf(" * %d\n", number);
             }
         }
-        status = scanf("%d", &N);
+        input = scanf("%d", &number);
     }
-    if (status == 0) {
-        fprintf(stderr, "Error: Chybny vstup!\n");
+
+    if (input == 0)
+    {
+        fprintf(stderr, "%s", error_msg_100);
         return 100;
     }
 
+    printf("\n");
     return 0;
 }
