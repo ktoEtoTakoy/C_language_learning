@@ -1,164 +1,102 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
-#define ALPHA 52
-#define SIZE 3
-char * memory(char *str, int capacity);
-char * rotate(char *original, int col, int offset);
-int compare(char *str1, char *str2, int col);
-void delete_two(char *str1, char *str2);
-void delete_three(char *str1, char *str2, char *str3);
+#define SIZE 110
 
-int main() {
+int find_the_key(char* crypted, char* encrypted_w_error)
+{
+    int key;
+    char ch1;
+    char ch2;
+    int array[SIZE];
 
-    int weight[ALPHA];
-    int i = 0, ii = 0;
-    int j = 0, jj = 0;
-    int col1 = SIZE;
-    int col2 = SIZE;
-    char *str1 = NULL;
-    char *str2 = NULL;
-    char *str_temp = NULL;
-
-//    str1 = (char *)malloc(SIZE * sizeof(char));
-    str1 = memory(str1, SIZE);
-    str2 = memory(str2, SIZE);
-
-
-    while ((str1[i] = getchar()) != '\n') {
-        if (isalpha(str1[i]) == 0) {
-            delete_two(str1, str2);
-            fprintf(stderr,"Error: Chybny vstup!\n");
-            return 100;
-        }
-        j++;
-        if (++i == col1) {
-            col1 = col1 + SIZE;
-            str1 = memory(str1, col1);
-        }
+    for (int i = 0; crypted[i] != '\0'; ++i)
+    {
+        ch1 = encrypted_w_error[i];// забираем i-тый char
+        //посмотеть , на сколько передвинут i = тый char
+        ch2 = crypted[i];
+        array[i]=ch2-ch1; // ищем повторяшки в этом массиве! 12 24 12 47 38 12 45
     }
 
-    while ((str2[ii] = getchar()) != '\n') {
-        if (isalpha(str2[ii]) == 0) {
-            delete_two(str1, str2);
-            fprintf(stderr,"Error: Chybny vstup!\n");
-            return 100;
-        }
-        jj++;
-        if (++ii == col2) {
-            col2 = col2 + SIZE;
-            str2 = memory(str2, col2);
-        }
-    }
-    if (j != jj) {
-        delete_two(str1, str2);
-        fprintf(stderr, "Error: Chybna delka vstupu!\n");
-        return 101;
-    }
+    int i = k = 0;
+    for(k; array[k] != '\0'; k++) // проходим всеми элементами
+    {
+        i = k+1;
+        do// для k того элемента смотрим все и от 1 до последнего
+        {
+            // 1 2 1 4 4 1
+            if (array[k] == array[i])
+            {
+                printf("%i",array[i]);
+            }
 
-    str_temp = memory(str_temp, i+1);
-
-    for (int k = 0; k < ALPHA; k++) {
-//        strcpy(str_temp, str1);
-        for (int kk = 0; kk < ii; kk++) {
-            str_temp[kk] = str1[kk];
+            ++i;
         }
-        str_temp = rotate(str_temp, ii, k);
-        weight[k] = compare(str_temp, str2, ii);
+        while(array[k] != '\0');
     }
 
-    int temp = 0;
-    int temp1 = 0;
-    for (int p = 0; p < ALPHA; p++) {
-        if (weight[p] > temp) {
-            temp = weight[p];
-            temp1 = p;
-        }
-    }
+    return key;
+}
 
-    str1 = rotate(str1, ii, temp1);
-    for (i = 0; i < jj; i++)
-        printf("%c", str1[i]);
+void function_encrypt(char* string, int key) // takes an array of chars, key is cipher movement
+{
+    char value;
+    char good_letter;
+    char ch;
+
+    if (key>26){ key %= 26; }else if (key<0) { key += 26; }
+
+    for (int i = 0; string[i] != '\0'; ++i) // проходим каждый символ строки
+    {
+		ch = string[i]; // в i-той итерации ch является i-тым символом
+
+		if (ch >= 'a' && ch <= 'z') // если символ является символом маленького алфавита
+        {
+			ch += key; // подвигаем символ на длину key
+
+
+            /* если мы подвинули так сильно, что вышли за алфавит, то ch -= 26;
+             z - 122 элемент. ch например 123, а 123 это а, но а это 97. 123 - 26 = 97, поэтому 26*/
+			if (ch > 'z') ch -= 26;
+
+            string[i] = ch;
+		}
+
+		else if (ch >= 'A' && ch <= 'Z')
+        {
+			ch += key;
+
+
+			if (ch > 'Z') ch -= 26;
+
+			string[i] = ch;
+		}
+        printf("%c",string[i] );
+	}
+}
+
+void print_string(char* string)
+{
+    for (int i = 0; string[i] != '\0'; ++i)
+    {
+        printf("%c", string[i]);
+    }
+}
+
+int main()
+{
+    char crypt[SIZE];   // chagne to dynamic array
+    char encrypt[SIZE]; // chagne to dynamic array
+
+    fgets(crypt, sizeof(crypt), stdin);
+
     printf("\n");
 
-    delete_three(str1, str2,str_temp);
+    //print_string(crypt);
+    printf("\n");
+    find_the_key(crypt, encrypt);
+    function_encrypt(crypt, find_the_key);
 
     return 0;
-}
-char * memory(char *str, int capacity) {
-//        printf("%d", capacity);
-        if ((str = (char *)realloc(str, capacity * sizeof(char))) == NULL) {
-            puts("Error!");
-            exit(EXIT_FAILURE);
-        }
-        return str;
-}
-int compare(char *str1, char *str2, int col) {
-    int equally = 0;
-    for (int s = 0; s < col; s++) {
-        if (str1[s] == str2[s])
-            equally++;
-    }
-    return equally;
-}
-char * rotate(char *original, int col, int offset) {
-    for (int i = 0; i < col; i++) {
-        if(offset < 26){
-            if (isupper(original[i])) {
-                if((original[i] - 'A' - offset + 26) / 26 == 0){
-                    original[i] = (original[i] - 'A' - offset + 26) % 26;
-                    original[i] = original[i] + 'a';
-                } else {
-                    original[i] = (original[i] - 'A' - offset + 26) % 26;
-                    original[i] = original[i] + 'A';
-                }
-            }
-            else {
-                if((original[i] - 'a' - offset + 26) / 26 == 0){
-                    original[i] = (original[i] - 'a' - offset + 26) % 26;
-                    original[i] = original[i] + 'A';
-                } else{
-                    original[i] = (original[i] - 'a' - offset + 26) % 26;
-                    original[i] = original[i] + 'a';
-                }
-            }
-        } else {
-            if (isupper(original[i])) {
-                int off = 0;
-                off = offset - 26;
-                if((original[i] - 'A' - off + 26) / 26 == 0){
-                    original[i] = (original[i] - 'A' - off + 26) % 26;
-                    original[i] = original[i] + 'A';
-                } else {
-                    original[i] = (original[i] - 'A' - off + 26) % 26;
-                    original[i] = original[i] + 'a';
-                }
-            }
-            else {
-                int off = 0;
-                off = offset - 26;
-                if((original[i] - 'a' - off + 26) / 26 == 0){
-                    original[i] = (original[i] - 'a' - off + 26) % 26;
-                    original[i] = original[i] + 'a';
-                } else {
-                    original[i] = (original[i] - 'a' - off + 26) % 26;
-                    original[i] = original[i] + 'A';
-                }
-            }
-        }
-    }
-    return original;
-}
-void delete_two(char *str1, char *str2){
-    free(str1);
-    free(str2);
-    str1 = NULL;
-    str2 = NULL;
-}
-void delete_three(char *str1, char *str2, char *str3){
-    free(str1);
-    free(str2);
-    free(str3);
-    str1 = NULL;
-    str2 = NULL;
-    str3 = NULL;
 }
