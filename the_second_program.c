@@ -59,7 +59,6 @@ int main()
 		percentage_of_negatives=0;
 	}
 
-    /*Final output */
     printf("Number of elements:\t %i \nPositive numbers: \t %i \nNegative numbers: \t %i \n",
     number_of_elements, positives, negatives);
 
