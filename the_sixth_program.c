@@ -1,158 +1,226 @@
 #include <stdio.h>
 #include <stdlib.h>
-void freeMemory(int **mas, int line);
 
-int main() {
+#define INCREASE 3
 
-    char simbol;
-    int line1 = 0;
-    int line2 = 0;
-    int column1 = 0;
-    int column2 = 0;
-    int **mas1 = NULL;
-    int **mas2 = NULL;
+typedef int** MATRIX;
 
-//Ð’Ð?ÐµÐ´Ð¸N‚Ðµ N€Ð°Ð·ÐLÐµN€Ð?ÐlNN‚NS ÐzÐµN€Ð?ÐlÐlÐl ÐLÐ°NNÐ¸Ð?Ð°
-    scanf("%d %d", &line1, &column1);
+typedef struct
+{
+    MATRIX matrix;
+    int rows;
+    int cols;
 
-//Ð’N‹Ð´ÐµÐ»ÐµÐ?Ð¸Ðµ ÐzÐ°ÐLNZN‚Ð¸ ÐzÐlÐ´ 1-N‹Ða ÐLÐ°NNÐ¸Ð?
-    mas1 = (int **)calloc(line1*column1, sizeof(int*));
-    for (int i1 = 0; i1 < line1; i1++) {
-        mas1[i1] = (int *)calloc(column1, sizeof(int));
-    }
+} Arrays;
 
-//Ð’Ð?ÐµÐ´Ð¸N‚Ðµ NTÐ»ÐµÐLÐµÐ?N‚N‹ 1-ÐlÐl ÐLÐ°NNÐ¸Ð?Ð°
-    for (int ii = 0; ii < line1; ii++) {
-        for (int jj = 0; jj < column1; jj++) {
-            scanf("%d", &mas1[ii][jj]);
+//////////////////////////////////
+
+Arrays matrix_declaration();
+
+Arrays arithmetic_action(Arrays A, Arrays B, int action);
+
+Arrays multiplication(Arrays A, Arrays B);
+
+char* err_msg_100 = "Error: Wrong input.";
+char* err_msg_101 = "Error: Uncorrect size of matrixes.";
+
+int POSITION;
+
+//////////////////////////////////
+
+int main()
+{
+    int increased = INCREASE;
+    char action = '0';
+    int matrix_position = 0;
+    Arrays *array_with_matrixes = (Arrays *) malloc(100 * sizeof(int*));
+    char *array_with_actions = (char *) malloc(100 * sizeof(char));
+
+///////////////////////////////// fix dynamic memory
+
+    do {
+        if(matrix_position + 1 >= increased)
+        {
+            array_with_matrixes = (Arrays *) realloc(array_with_matrixes, (increased * 20) * sizeof(int*));
+            array_with_actions = (char *) realloc(array_with_actions, (increased * 20) * sizeof(char));
+            increased += INCREASE;
         }
-    }
-//Ð’Ð?ÐµÐ´Ð¸N‚Ðµ ÐsÐ°ÐLÐ°Ð?Ð´N? "+","-","*"
-    scanf("%c", &simbol);
-    scanf("%c", &simbol);
-    //simbol = getchar();
-    //printf("%d\n", simbol);
 
-//Ð’Ð?ÐµÐ´Ð¸N‚Ðµ N€Ð°Ð·ÐLÐµN€Ð?ÐlNN‚NS Ð?N‚ÐlN€ÐlÐlÐl ÐLÐ°NNÐ¸Ð?Ð°
-    scanf("%d %d", &line2, &column2);
+        array_with_matrixes[matrix_position] = matrix_declaration();
 
-//Ð’N‹Ð´ÐµÐ»ÐµÐ?Ð¸Ðµ ÐzÐ°ÐLNZN‚Ð¸ ÐzÐlÐ´ 2-ÐlÐa ÐLÐ°NNÐ¸Ð?
-    mas2 = (int **)calloc(line2*column2, sizeof(int*));
-    for (int i1 = 0; i1 < line2; i1++) {
-        mas2[i1] = (int *)calloc(column2, sizeof(int));
-    }
+        getchar();
+        printf("Enter action\n" );
+        scanf("%c", &action);
 
-//Ð’Ð?ÐµÐ´Ð¸N‚Ðµ NTÐ»ÐµÐLÐµÐ?N‚N‹ 2-ÐlÐl ÐLÐ°NNÐ¸Ð?Ð°
-    for (int ii = 0; ii < line2; ii++) {
-        for (int jj = 0; jj < column2; jj++) {
-            scanf("%d", &mas2[ii][jj]);
-        }
-    }
-//Ð’N‹ÐzÐlÐ»Ð?ÐµÐ?Ð¸Ðµ ÐlÐzÐµN€Ð°N†N‹Ða N ÐLÐ°NNÐ¸Ð?Ð°ÐLÐ¸
-    switch (simbol)
+        array_with_actions[matrix_position] = action;
+
+        ++matrix_position;
+
+    } while (action != '=');
+
+//////////////////////////////////
+
+    POSITION = matrix_position;
+    Arrays temp_arrays;
+
+    for (int i = POSITION - 1; i > 0; i--)
     {
-    case '+':
-        if (line1 == line2 && column1 == column2) {
-            for (int ii = 0; ii < line1; ii++) {
-                for (int jj = 0; jj < column1; jj++) {
-                    mas1[ii][jj] = mas1[ii][jj] + mas2[ii][jj];
-                }
-            }
-            //Ð’N‹Ð?ÐlÐ´ N€ÐµÐ·N?Ð»NSN‚Ð°N‚Ð° NÐ»ÐlÐ¶ÐµÐ?Ð¸NZ ÐLÐ°N‚N€Ð¸N†
-            printf("%d %d\n", line1, column1);
-            for (int ii = 0; ii < line1; ii++) {
-                for (int jj = 0; jj < column1; jj++) {
-                    printf("%d", mas1[ii][jj]);
-                    if (jj < column1-1)
-                        printf(" ");
-                }
-                printf("\n");
-            }
-        }
-        else {
-            fprintf(stderr, "Error: Chybny vstup!\n");
-            freeMemory(mas1, line1);
-            freeMemory(mas2, line2);
-            return 100;
-        }
-        break;
-    case '-':
-        if (line1 == line2 && column1 == column2) {
-            for (int ii = 0; ii < line1; ii++) {
-                for (int jj = 0; jj < column1; jj++) {
-                    mas1[ii][jj] = mas1[ii][jj] - mas2[ii][jj];
-                }
-            }
-            //Ð’N‹Ð?ÐlÐ´ N€ÐµÐ·N?Ð»NSN‚Ð°N‚Ð° N€Ð°Ð·Ð?Ð¸N† ÐLÐ°N‚N€Ð¸N†
-            printf("%d %d\n", line1, column1);
-            for (int ii = 0; ii < line1; ii++) {
-                for (int jj = 0; jj < column1; jj++) {
-                    printf("%d", mas1[ii][jj]);
-                    if(jj < column1-1)
-                        printf(" ");
-                }
-                printf("\n");
-            }
-        }
-        else {
-            fprintf(stderr, "Error: Chybny vstup!\n");
-            freeMemory(mas1, line1);
-            freeMemory(mas2, line2);
-            return 100;
-        }
-        break;
-    case '*':
-        if (column1 == line2) {
-            int **mas_result = NULL;
-            mas_result = (int **)calloc(line1*column2, sizeof(int*));
-            for (int i1 = 0; i1 < line1; i1++) {
-                mas_result[i1] = (int *)calloc(column2, sizeof(int));
-            }
-            int i = 0, j = 0, k = 0;
-            for (i = 0; i < line1; i++)
+        if (array_with_actions[i - 1] == '*')
+        {
+            temp_arrays = multiplication(array_with_matrixes[i], array_with_matrixes[i - 1]);
+            array_with_matrixes[i] = temp_arrays;
+
+            for (int j = i; j < matrix_position; j++)
             {
-                for (j = 0; j < column2; j++)
-                {
-                    for (k = 0; k < line2; k++)
-                    {
-                        mas_result[i][j] += mas1[i][k] * mas2[k][j];
-                    }
-                }
+                array_with_matrixes[j - 1] = array_with_matrixes[j];
+                array_with_actions[j - 1] = array_with_actions[j];
             }
-            //Ð’N‹Ð?ÐlÐ´ N€ÐµÐ·N?Ð»NSN‚Ð°N‚Ð° N?ÐLÐ?ÐlÐ¶ÐµÐ?Ð¸NZ ÐLÐ°N‚N€Ð¸N†
-            printf("%d %d\n", line1, column2);
-            for (int ii = 0; ii < line1; ii++) {
-                for (int jj = 0; jj < column2; jj++) {
-                    printf("%d", mas_result[ii][jj]);
-                    if (jj < column2 - 1)
-                        printf(" ");
-                }
-                printf("\n");
-            }
-            freeMemory(mas_result, line1);
+
+            matrix_position--;
         }
-        else {
-            fprintf(stderr, "Error: Chybny vstup!\n");
-            freeMemory(mas1, line1);
-            freeMemory(mas2, line2);
-            return 100;
-        }
-        break;
-    default:
-        fprintf(stderr, "Error: Chybny vstup!\n");
-        freeMemory(mas1, line1);
-        freeMemory(mas2, line2);
-        return 100;
     }
 
-    freeMemory(mas1, line1);
-    freeMemory(mas2, line2);
+//////////////////////////////////
+
+    for (int j = 0; j < matrix_position-1; j++)
+    {
+        switch (array_with_actions[j])
+        {
+            case '+':
+                temp_arrays = arithmetic_action(array_with_matrixes[0], array_with_matrixes[j+1], 1);
+                array_with_matrixes[0] = temp_arrays;
+                break;
+
+            case '-':
+                temp_arrays = arithmetic_action(array_with_matrixes[0], array_with_matrixes[j+1], -1);
+                array_with_matrixes[0] = temp_arrays;
+                break;
+
+            default:
+                printf("You entered the wrong action\n");
+                return 0;
+        }
+    }
+
+    printf("RESULT :\n");
+    for (int i = 0; i < array_with_matrixes[0].rows; i++)
+    {
+        for (int k = 0; k < array_with_matrixes[0].cols; k++)
+        {
+            printf("%d ", array_with_matrixes[0].matrix[i][k]);
+        }
+
+        printf("\n");
+    }
 
     return 0;
 }
 
-void freeMemory(int **mas, int line) {
-    for (int i = 0; i < line; i++)
-        free(mas[i]);
-    free(mas);
+///////////////////////////////////
+
+Arrays matrix_declaration()
+{
+    Arrays element;
+    int rows, cols;
+    printf("Enter number of rows and cols: \n");
+    int size_is = scanf("%i %i",&rows, &cols);
+
+    if ((size_is != 2) || (rows<0 || cols<0))
+    {
+        fprintf(stderr, "%s", err_msg_100);
+        exit(EXIT_FAILURE);
+    }
+
+    element.cols = cols;
+    element.rows = rows;
+
+    MATRIX array=(int**)malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; i++)
+    {
+        array[i]=(int*)malloc(cols * sizeof(int));
+    }
+
+    printf("Enter elements of matrix: \n");
+
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            scanf("%d", &array[i][j]);
+
+    element.matrix = array;
+
+    return element;
+}
+
+///////////////////////////////////
+
+Arrays arithmetic_action(Arrays A, Arrays B, int action)
+{
+    if (A.rows != B.rows || A.cols != B.cols)
+    {
+        fprintf(stderr, "%s", err_msg_101);
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < A.rows; i++)
+        for (int j = 0; j < A.cols; j++)
+            A.matrix[i][j] = (A.matrix[i][j] + action * B.matrix[i][j]);
+
+    return A;
+
+}
+
+//////////////////////////////////
+
+Arrays multiplication(Arrays B, Arrays A)
+{
+    if ((A.rows == B.rows && A.cols == B.cols) || (A.rows != B.rows && A.cols != B.cols))
+    {
+        Arrays sum;
+        sum.rows = A.rows;
+        sum.cols = B.cols;
+
+        MATRIX array=(int**)malloc(sum.rows * sizeof(int*));
+        for (int i = 0; i < sum.rows; i++)
+        {
+            array[i]=(int*)malloc(sum.cols * sizeof(int));
+        }
+
+        sum.matrix = array;
+
+        for (int i = 0; i < sum.rows; i++)
+            for (int j = 0; j < sum.cols; j++)
+                sum.matrix[i][j]=0;
+
+        int r1 = 0;
+        int r2 = 0;
+        int c1 = 0;
+        int c2 = 0;
+
+s////////////////////////////////////
+
+        for (int i = 0; i < A.rows; i++)
+        {
+            for (int j = 0; j < B.cols; j++)
+            {
+                while (c1 != A.cols && r2 != B.rows)
+                {
+                    sum.matrix[i][j] += (A.matrix[r1][c1] * B.matrix[r2][c2]);
+                    c1++;
+                    r2++;
+                }
+                c2++;
+                r2 = 0;
+                c1 = 0;
+            }
+            c2 = 0;
+            r1++;
+        }
+
+        return sum;
+    }
+    else
+    {
+        fprintf(stderr, "%s", err_msg_101);
+        exit(EXIT_FAILURE);
+    }
 }
