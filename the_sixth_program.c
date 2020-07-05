@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define INCREASE 3
 
@@ -15,14 +16,26 @@ typedef struct
 
 //////////////////////////////////
 
+int factorial(int number);
+
+void swap(int *a, int *b);
+
+void permutation(int *arr, int start, int end, int** arrays_with_p);
+
 Arrays matrix_declaration();
 
 Arrays arithmetic_action(Arrays A, Arrays B, int action);
 
 Arrays multiplication(Arrays A, Arrays B);
 
+int det(Arrays result);
+
+int** true_perm2(int size);
+
 char* err_msg_100 = "Error: Wrong input.";
-char* err_msg_101 = "Error: Uncorrect size of matrixes.";
+char* err_msg_101 = "Error: Incorrect size of matrixes.";
+int arrays_with_perm[40320][8];
+int jjj = 0;
 
 int POSITION;
 
@@ -35,6 +48,7 @@ int main()
     int matrix_position = 0;
     Arrays *array_with_matrixes = (Arrays *) malloc(100 * sizeof(int*));
     char *array_with_actions = (char *) malloc(100 * sizeof(char));
+    int determinant;
 
 ///////////////////////////////// fix dynamic memory
 
@@ -82,6 +96,14 @@ int main()
 
 //////////////////////////////////
 
+    if (action == 'd')
+    {
+        determinant = det(array_with_matrixes[0]);
+        printf("Determinant is: %d\n", determinant);
+        return 0;
+    }
+
+
     for (int j = 0; j < matrix_position-1; j++)
     {
         switch (array_with_actions[j])
@@ -95,6 +117,7 @@ int main()
                 temp_arrays = arithmetic_action(array_with_matrixes[0], array_with_matrixes[j+1], -1);
                 array_with_matrixes[0] = temp_arrays;
                 break;
+
 
             default:
                 printf("You entered the wrong action\n");
@@ -113,7 +136,61 @@ int main()
         printf("\n");
     }
 
+    determinant = det(array_with_matrixes[0]);
+    printf("Determinant is: %d\n", determinant);
     return 0;
+
+
+}
+
+///////////////////////////////////
+
+int det(Arrays matrix)
+{
+
+    if (matrix.rows != matrix.cols )
+    {
+        fprintf(stderr, "Determinant can be evaluated only"
+         "for matrices with the same number of rows and collums\n" );
+        exit(EXIT_FAILURE);
+    }
+    else if (matrix.cols == 1)
+    {
+        return matrix.matrix[0][0];
+    } else if(matrix.cols > 1)
+    {
+        int determinant = 0;
+// here is the determinant determinaton
+
+        int factorial_of_size = factorial(matrix.cols);
+        int size = matrix.cols;
+        //int** permutations = (int**)malloc(factorial_of_size* sizeof(int*));
+
+        int** permutations = true_perm2(size);
+
+
+        int* arr = (int*) malloc(size*sizeof(int));
+        for (int i = 0; i < size; i++)
+            arr[i] = i; //[0 1 2 ]
+
+
+        int multipl;
+        for (int i = 0; i < factorial_of_size; i++ )//[ [] [] [] [] [] [] ]
+        {
+            multipl = 1;
+
+            for (int j = 0; j < size; j++)
+            {
+                multipl *= matrix.matrix[arr[j]][permutations[i][j]];//[0 1 2]
+                                                                    //[ 2 1 0]
+            }
+            if (i % 2 != 0 ) {determinant -= multipl;}
+            else            {determinant += multipl;}
+        }
+
+
+        return determinant;
+    }
 }
 
 ///////////////////////////////////
@@ -173,54 +250,131 @@ Arrays arithmetic_action(Arrays A, Arrays B, int action)
 
 Arrays multiplication(Arrays B, Arrays A)
 {
-    if ((A.rows == B.rows && A.cols == B.cols) || (A.rows != B.rows && A.cols != B.cols))
+
+    Arrays sum;
+    sum.rows = A.rows;
+    sum.cols = B.cols;
+
+    MATRIX array=(int**)malloc(sum.rows * sizeof(int*));
+    for (int i = 0; i < sum.rows; i++)
     {
-        Arrays sum;
-        sum.rows = A.rows;
-        sum.cols = B.cols;
+        array[i]=(int*)malloc(sum.cols * sizeof(int));
+    }
+    sum.matrix = array;
 
-        MATRIX array=(int**)malloc(sum.rows * sizeof(int*));
-        for (int i = 0; i < sum.rows; i++)
+    for (int i = 0; i < sum.rows; i++)
+        for (int j = 0; j < sum.cols; j++)
+            sum.matrix[i][j]=0;
+
+    int r1 = 0;
+    int r2 = 0;
+    int c1 = 0;
+    int c2 = 0;
+
+    for (int i = 0; i < A.rows; i++)
+    {
+        for (int j = 0; j < B.cols; j++)
         {
-            array[i]=(int*)malloc(sum.cols * sizeof(int));
-        }
-
-        sum.matrix = array;
-
-        for (int i = 0; i < sum.rows; i++)
-            for (int j = 0; j < sum.cols; j++)
-                sum.matrix[i][j]=0;
-
-        int r1 = 0;
-        int r2 = 0;
-        int c1 = 0;
-        int c2 = 0;
-
-s////////////////////////////////////
-
-        for (int i = 0; i < A.rows; i++)
-        {
-            for (int j = 0; j < B.cols; j++)
+            while (c1 != A.cols && r2 != B.rows)
             {
-                while (c1 != A.cols && r2 != B.rows)
-                {
-                    sum.matrix[i][j] += (A.matrix[r1][c1] * B.matrix[r2][c2]);
-                    c1++;
-                    r2++;
-                }
-                c2++;
-                r2 = 0;
-                c1 = 0;
+                sum.matrix[i][j] += (A.matrix[r1][c1] * B.matrix[r2][c2]);
+                c1++;
+                r2++;
             }
-            c2 = 0;
-            r1++;
+            c2++;
+            r2 = 0;
+            c1 = 0;
         }
+        c2 = 0;
+        r1++;
+    }
 
-        return sum;
-    }
-    else
+    return sum;
+}
+
+///////////////////////////////////
+
+void permutation(int *arr, int start, int end, int** arrays_with_p)
+{
+
+    int i;
+    if(start==end)
     {
-        fprintf(stderr, "%s", err_msg_101);
-        exit(EXIT_FAILURE);
+        arrays_with_p[jjj] = arr;
+        for(int i=0; i <= end; i++)
+        {
+            //printf("%d\t",arr[i]);
+
+            printf("%d ",arrays_with_p[jjj][i]);
+            arrays_with_perm[jjj][i] = arrays_with_p[jjj][i];
+        }
+        printf("\n");
+        jjj++;
+
     }
+
+    for(i=start; i<=end; i++)
+    {
+        swap((arr+i), (arr+start));
+        //fixing one first digit
+        //and calling permutation on
+        //the rest of the digits
+        permutation(arr, start+1, end, arrays_with_p);
+        swap((arr+i), (arr+start));
+    }
+
+}
+
+
+void swap(int *a, int *b)
+{
+    int temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+int factorial(int number)
+{
+    if ( number <= 1)
+        {return 1;}
+    else number = number * factorial(number-1);
+
+    return number;
+}
+
+int** true_perm2(int size)
+{
+
+    int factorial_of_size = factorial(size);
+
+    int** arrays_with_p = (int**)malloc(factorial_of_size * sizeof(int*));
+
+    int* arr = (int*) malloc(size*sizeof(int));
+
+    for (int i = 0; i < size; i++)
+    {
+        arr[i] = i;
+    }
+
+
+    permutation(arr, 0, size-1, arrays_with_p);
+
+
+    int** true_perm2 =(int**)malloc(factorial_of_size* sizeof(int*));// 4
+    for (size_t i = 0; i < factorial_of_size; i++)
+        true_perm2[i] = (int*)malloc(size* sizeof(int*));
+
+
+    for (int r = 0; r < factorial_of_size; r++)
+        for (int k = 0; k < size; k++)
+            true_perm2[r][k] = arrays_with_perm[r][k];
+
+
+    // for (int i = 0; i <factorial_of_size; i++)
+    // {
+    //     free(arrays_with_p[i]);
+    // }
+    // free(arrays_with_p);
+
+    return true_perm2;
 }
