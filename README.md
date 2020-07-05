@@ -15,4 +15,4 @@ the_sixth_program - Arithmetic operations with matrices
 
 the_seventh_program - Find pattern in file
 
-the_eighth_program - ...
+the_eighth_program - 
