@@ -22,10 +22,12 @@ Arrays arithmetic_action(Arrays A, Arrays B, int action);
 
 Arrays multiplication(Arrays A, Arrays B);
 
+double** ellemenat(Arrays array);
+
+void deter(double* not_change, double* change, int value, int size);
+
 char* err_msg_100 = "Error: Wrong input.";
 char* err_msg_101 = "Error: Incorrect size of matrixes.";
-int arrays_with_perm[40320][8];
-int jjj = 0;
 
 int POSITION;
 
@@ -115,10 +117,82 @@ int main()
 
         printf("\n");
     }
+
+    int size_of_ppp = array_with_matrixes[0].rows;
+    double** our_array = (double**)malloc(size_of_ppp * sizeof(double*));
+    for (size_t i = 0; i < size_of_ppp; i++)
+    {
+        our_array[i] = (double*)malloc(size_of_ppp * sizeof(double));
+    }
+
+    our_array = ellemenat(array_with_matrixes[0]);
+
+    double determinant = 1.0;
+    int scet = size_of_ppp - 1;
+    for (int k = 0; k < size_of_ppp - 1; k++)
+    {
+        for (int i = 0; i < scet; i++)
+        {
+            if (our_array[k+i+1][k] != 0)
+                deter(our_array[k], our_array[k+i+1], k, size_of_ppp);
+        }
+        scet--;
+        determinant*=our_array[k][k];
+    }
+
+    determinant*=our_array[size_of_ppp - 1][size_of_ppp - 1];
+
+    printf("\nDeterminant = %.2lf", determinant);
+
     return 0;
 }
 
 ///////////////////////////////////
+
+void deter(double* not_change, double* change, int value, int size)
+{
+    double temp = change[value] / not_change[value]; // 2
+
+    for (int i = 0; i < size; i++)
+    {
+        not_change[i]*=temp;
+        change[j]-=not_change[j];
+        not_change[k]/=temp;
+    } // if program doesnt work, fix that
+
+    // for (int j = 0; j < size; j++)
+    // {
+    //     change[j]-=not_change[j];
+    // }
+    //
+    // for (int k = 0; k < size; k++)
+    // {
+    //     not_change[k]/=temp;
+    // }
+}
+
+double** ellemenat(Arrays array)
+{
+    double** mas = (double**)malloc(array.cols * sizeof(double*));
+    for (size_t i = 0; i < array.cols; i++)
+    {
+        mas[i] = (double*)malloc(array.cols * sizeof(double));
+        for (size_t j = 0; j < array.cols; j++)
+        {
+            mas[i][j] = (double)array.matrix[i][j] * 1.0;
+        }
+    }  // if program doesnt work, fix that
+
+    // for (size_t i = 0; i < array.rows; i++)
+    // {
+    //     for (size_t j = 0; j < array.cols; j++)
+    //     {
+    //         mas[i][j] = (double)array.matrix[i][j] * 1.0;
+    //     }
+    // }
+
+    return mas;
+}
 
 Arrays matrix_declaration()
 {
